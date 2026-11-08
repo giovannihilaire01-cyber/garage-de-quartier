@@ -1,0 +1,1 @@
+{"id":"./","name":"Garage de quartier","short_name":"Mon garage","description":"Une petite simulation de mécanique et de vie de quartier.","lang":"fr","start_url":"./","scope":"./","display":"standalone","orientation":"any","background_color":"#f6f3eb","theme_color":"#202d2d","icons":[{"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}

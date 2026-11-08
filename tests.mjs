@@ -1,0 +1,35 @@
+import {fresh,act,validateSave,price} from './engine.mjs';
+import {FAULTS,UPGRADES} from './data.mjs';
+export function runTests(){
+ const results=[];const check=(name,fn)=>{try{fn();results.push({name,pass:true});}catch(e){results.push({name,pass:false,error:e.message});}};
+ const assert=(x,m='Assertion non satisfaite')=>{if(!x)throw Error(m);};
+ const fails=fn=>{let failed=false;try{fn();}catch{failed=true;}assert(failed,'Cette action aurait dû être refusée');};
+ const move=(s,t,p)=>act(s,t,p).state;
+ const job=(fault='battery')=>{let s=fresh();s=move(s,'accept',{index:0});s.active.fault=fault;return s;};
+ const repair=(s,fault=s.active.fault)=>{if(!s.active.tests.includes('visual'))s=move(s,'test',{id:'visual'});s=move(s,'diagnose',{id:fault});s=move(s,'order');for(let i=0;i<4;i++)s=move(s,'bolt',{index:i});s=move(s,'repair');s=move(s,'check');return s;};
+ check('État initial valide',()=>assert(validateSave(fresh())));
+ check('Aucune mutation de l’état fourni',()=>{const s=fresh(),before=JSON.stringify(s);move(s,'accept',{index:0});assert(JSON.stringify(s)===before);});
+ check('Impossible de livrer sans voiture',()=>fails(()=>move(fresh(),'deliver')));
+ check('Un seul véhicule sur le poste',()=>fails(()=>move(job(),'accept',{index:1})));
+ check('Impossible de diagnostiquer sans indice',()=>fails(()=>move(job(),'diagnose',{id:'battery'})));
+ check('Test inconnu refusé',()=>fails(()=>move(job(),'test',{id:'unknown'})));
+ check('Un test ne consomme du temps qu’une fois',()=>{let s=move(job(),'test',{id:'visual'});fails(()=>move(s,'test',{id:'visual'}));assert(s.minutes===495);});
+ for(const id of Object.keys(FAULTS))check(`Parcours complet : ${id}`,()=>{let s=repair(job(id));assert(s.active.checked);assert(validateSave(s));const cost=price(s,id);s=move(s,'deliver');assert(s.completed===1&&s.cash===420+25+FAULTS[id].labor);assert(s.ledger[1].amount===-cost);assert(validateSave(s));});
+ check('Une pièce incorrecte ne résout pas la panne',()=>{let s=repair(job(),'connection');assert(!s.active.repaired&&s.active.stage==='diagnose');fails(()=>move(s,'deliver'));s=repair(s);s=move(s,'deliver');assert(s.completed===1&&s.cash===506);});
+ check('Fixation répétée refusée',()=>{let s=move(job(),'test',{id:'visual'});s=move(s,'diagnose',{id:'battery'});s=move(s,'order');s=move(s,'bolt',{index:0});fails(()=>move(s,'bolt',{index:0}));});
+ check('Quatre fixations obligatoires',()=>{let s=move(job(),'test',{id:'visual'});s=move(s,'diagnose',{id:'battery'});s=move(s,'order');fails(()=>move(s,'repair'));});
+ check('Budget insuffisant sans mutation',()=>{let s=fresh();s.cash=2;const before=JSON.stringify(s);fails(()=>move(s,'upgrade',{id:'lift'}));assert(JSON.stringify(s)===before);});
+ check('Équipement acheté une seule fois',()=>{let s=move(fresh(),'upgrade',{id:'lift'});assert(s.cash===70);fails(()=>move(s,'upgrade',{id:'lift'}));});
+ check('Réduction outillage appliquée',()=>{let s=fresh();s.cash=1000;s=move(s,'upgrade',{id:'tools'});assert(price(s,'battery')===59);});
+ check('Devis figé après commande',()=>{let s=job();s.cash=2000;s=repair(s);const quoted=s.active.invoice;s=move(s,'upgrade',{id:'sign'});const cash=s.cash;s=move(s,'deliver');assert(s.cash===cash+quoted);});
+ check('Temps de fermeture protégé',()=>{let s=job();s.minutes=1080;fails(()=>move(s,'test',{id:'visual'}));assert(s.minutes===1080);});
+ check('Travaux conservés au lendemain',()=>{let s=job();s=move(s,'test',{id:'visual'});s=move(s,'nextDay');assert(s.day===2&&s.minutes===480&&s.active.tests.includes('visual')&&s.offers.length===3);});
+ check('Fonds de relance évite le blocage',()=>{let s=fresh();s.cash=0;s=move(s,'nextDay');assert(s.cash===70);});
+ check('Annonce fermée au jour 1',()=>fails(()=>move(fresh(),'buy')));
+ check('Restauration et revente complètes',()=>{let s=move(fresh(),'nextDay');s=move(s,'buy');fails(()=>move(s,'buy'));s=move(s,'restore');s=repair(s);s=move(s,'deliver');assert(s.completed===0&&s.project.restored);s=move(s,'sell');assert(s.sold===1&&s.project===null&&s.cash===591);});
+ check('Sauvegarde à chaque phase',()=>{let s=job();const round=()=>{s=JSON.parse(JSON.stringify(s));assert(validateSave(s));};round();s=move(s,'test',{id:'visual'});s=move(s,'diagnose',{id:'battery'});round();s=move(s,'order');round();for(let i=0;i<4;i++)s=move(s,'bolt',{index:i});s=move(s,'repair');round();s=move(s,'check');round();s=move(s,'deliver');round();});
+ check('Sauvegardes corrompues rejetées',()=>{for(const bad of [null,{}, {...fresh(),cash:-5},{...fresh(),offers:[8]},{...fresh(),upgrades:['x']},{...fresh(),day:NaN},{...fresh(),active:{fault:'x'}}])assert(!validateSave(bad));});
+ check('Données importées : diagnostic forgé rejeté',()=>{let s=job();s.active.stage='deliver';s.active.checked=true;assert(!validateSave(s));});
+ check('Campagne complète accessible sans triche économique',()=>{let s=fresh();for(let n=0;n<40&&!s.goals.includes('master');n++){if(!s.offers.length||s.minutes>880)s=move(s,'nextDay');if(!s.active)s=move(s,'accept',{index:s.offers[0]});s=repair(s);s=move(s,'deliver');for(const u of UPGRADES)if(!s.upgrades.includes(u.id)&&s.cash>=u.cost+100)s=move(s,'upgrade',{id:u.id});if(s.day>=2&&s.sold===0&&s.cash>=350&&!s.active){s=move(s,'buy');s=move(s,'restore');if(s.minutes>900)s=move(s,'nextDay');s=repair(s);s=move(s,'deliver');s=move(s,'sell');}}assert(s.goals.includes('master'));assert(s.cash>=0&&validateSave(s));});
+ return {passed:results.filter(x=>x.pass).length,total:results.length,results};
+}

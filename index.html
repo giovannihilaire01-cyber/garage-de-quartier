@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="fr">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+ <meta name="theme-color" content="#202d2d"><meta name="description" content="Votre atelier, vos mains, votre histoire. Un jeu de garage gratuit, tactile et jouable hors ligne.">
+ <link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="manifest" href="./manifest.webmanifest"><link rel="stylesheet" href="./style.css">
+ <title>Garage de quartier — Le petit atelier</title>
+</head>
+<body>
+ <header class="topbar"><a href="./" class="brand" aria-label="Garage de quartier, accueil"><span class="brand-symbol" aria-hidden="true">G<span>q</span></span><span>GARAGE<span class="brand-small">DE QUARTIER</span></span></a><span class="edition">LE PETIT ATELIER <i>•</i> ÉDITION WEB</span><button id="settings" class="icon-button" aria-label="Réglages">⚙</button></header>
+ <main id="app"></main>
+ <nav id="nav" class="bottom-nav" aria-label="Navigation du garage"></nav>
+ <div id="toast" role="status" aria-live="polite"></div>
+ <dialog id="dialog" aria-labelledby="dialog-title"><div id="dialog-content"></div></dialog>
+ <script type="module" src="./app.mjs"></script>
+</body></html>
