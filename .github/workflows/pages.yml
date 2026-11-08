@@ -11,7 +11,24 @@ concurrency:
   group: pages
   cancel-in-progress: false
 jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Vérifier les modules JavaScript
+        run: |
+          for file in *.mjs sw.js; do node --check "$file"; done
+      - name: Tester les règles du jeu
+        run: |
+          node --input-type=module <<'JS'
+          import { runTests } from './tests.mjs';
+          const result = runTests();
+          console.table(result.results);
+          if (result.passed !== result.total) process.exit(1);
+          console.log(`${result.passed}/${result.total} tests réussis`);
+          JS
   deploy:
+    needs: verify
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

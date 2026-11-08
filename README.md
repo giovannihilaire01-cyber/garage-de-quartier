@@ -56,3 +56,7 @@ Les sauvegardes restent dans le navigateur. Exporter la partie avant d’effacer
 ## Publication
 
 Site statique compatible GitHub Pages. Le workflow publie le dossier sans build et sans clé d’API. L’activation initiale de Pages dépend des permissions GitHub du dépôt.
+
+Si Pages n’est pas activé : dans Settings → Pages → Build and deployment → Source, choisir GitHub Actions, puis relancer le workflow. L’automatisation vérifie d’abord la syntaxe et les 29 scénarios du moteur.
+
+Le [rapport QA](QA.md) distingue les tests réellement effectués, les limites et l’état de publication.
