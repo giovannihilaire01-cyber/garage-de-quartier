@@ -58,3 +58,9 @@ La conception longue dans CONCEPTION.md décrit des extensions futures. Cet épi
 L’oxygène et la récupération sont couverts par le moteur et le parcours extérieur. Le fonctionnement en mode avion sur téléphone, l’installation sur écran d’accueil, l’import/export par un sélecteur de fichiers mobile, la perte réelle de contexte GPU et le comportement thermique sur appareil ancien ne sont pas validés physiquement.
 
 Les sauvegardes restent sur l’appareil. L’export sert au transfert ; aucun backend ou suivi utilisateur n’est utilisé.
+
+## Publication
+
+La version publique a démarré sa scène 3D en format paysage mobile simulé. Le déplacement vers la première balise et son activation ont été effectués sur cette URL, puis les 43 tests y ont été rejoués avec succès. Les 123 règles de style sont bien présentes dans la page et aucun débordement horizontal n’a été détecté dans cet essai.
+
+La publication et les vérifications automatiques GitHub ont réussi. Le cache de l’épisode est isolé de celui du jeu Garage de quartier, qui reste à la racine du site.
