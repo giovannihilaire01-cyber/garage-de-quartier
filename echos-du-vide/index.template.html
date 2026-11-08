@@ -1,0 +1,17 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#06131e"><meta name="description" content="Une aventure 3D parmi les étoiles. Réveillez la station Élytre, suivez le signal et ramenez Nora."><title>Échos du vide — Le signal d’Élytre</title><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="manifest" href="./manifest.webmanifest"><!-- GAME_STYLE --></head><body>
+<canvas id="world" aria-label="Station spatiale Élytre en trois dimensions"></canvas>
+<div id="boot"><span class="boot-symbol">✦</span><p>ÉTABLISSEMENT DE LA LIAISON</p><div class="loading-line"></div><small>Préparation de la station…</small></div>
+<main id="hud" hidden>
+ <header class="hud-top"><div class="station-brand"><span class="station-icon">✦</span><span>ÉLYTRE<small>STATION ORBITALE · 07</small></span></div><div class="top-actions"><button id="journal-button" aria-label="Journal et carte">☷</button><button id="menu-button" aria-label="Pause et réglages">Ⅱ</button></div></header>
+ <section class="objective-panel" aria-label="Objectif en cours"><span id="chapter">LIAISON PERDUE</span><h1 id="objective-title"></h1><p id="objective-detail"></p><button id="guide-button" class="guide-button">◇ Tracer un itinéraire</button></section>
+ <div id="zone-label"><span id="zone-name">SAS D’ARRIVÉE</span><small id="zone-detail">ATMOSPHÈRE STABLE</small></div>
+ <div id="target-label" hidden><span id="target-name"></span><small id="target-distance"></small></div>
+ <div class="bottom-status"><div id="oxygen-panel"><span class="status-label">O₂ <b id="oxygen-value">100</b><small>%</small></span><div class="oxygen-track"><i id="oxygen-fill"></i></div><span id="suit-mode">BOTTES MAGNÉTIQUES</span></div><button id="save-status" aria-label="État de la sauvegarde">● Sauvegarde prête</button></div>
+ <div id="desktop-help">ZQSD / WASD · déplacement <span>Glisser · caméra</span> E · interagir <span>F · propulseurs</span></div>
+ <div id="joystick" role="group" aria-label="Joystick de déplacement"><span class="joystick-ring"></span><span id="joystick-knob"></span><small>DÉPLACEMENT</small></div>
+ <div class="control-actions"><button id="flight-button" class="round-control" aria-label="Activer ou désactiver les propulseurs" hidden>↑<small>VOL</small></button><button id="scan-button" class="round-control" aria-label="Scanner les objets">⌖<small>SCAN</small></button><button id="interact-button" disabled><span id="interaction-symbol">E</span><span id="interaction-text">Explorez la station</span></button></div>
+ <div id="subtitle" aria-live="polite"></div><div id="toast" role="status" aria-live="polite"></div><div id="scan-ring" hidden></div>
+</main>
+<dialog id="panel" aria-labelledby="panel-title"><div id="panel-content"></div></dialog>
+<input id="import-file" type="file" accept="application/json,.json" hidden>
+<script type="module">import("./app.mjs").catch(()=>{document.getElementById("boot").innerHTML='<span class="boot-symbol">◇</span><p>LA LIAISON A ÉTÉ INTERROMPUE</p><small>Le chargement du jeu a échoué. Vérifiez la connexion puis réessayez ; votre sauvegarde reste sur cet appareil.</small><button class="secondary" onclick="location.reload()" style="margin-top:22px">Réessayer</button>';});</script><noscript>Ce jeu a besoin de JavaScript pour fonctionner.</noscript></body></html>

@@ -1,0 +1,29 @@
+name: Vérifier Échos du vide
+on:
+  push:
+    branches: [main]
+    paths: ['echos-du-vide/**', '.github/workflows/echos-check.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  episode:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: echos-du-vide
+    steps:
+      - uses: actions/checkout@v4
+      - name: Vérifier la syntaxe
+        run: |
+          python build.py --check
+          for file in *.mjs sw.js; do node --check "$file"; done
+      - name: Tester la progression et les sauvegardes
+        run: |
+          node --input-type=module <<'JS'
+          import { runTests } from './tests.mjs';
+          const r = await runTests();
+          console.table(r.results);
+          console.log(`${r.passed}/${r.total} tests réussis`);
+          if (r.passed !== r.total) process.exit(1);
+          JS
