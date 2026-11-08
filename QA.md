@@ -44,9 +44,11 @@ Le service worker est actif et ses neuf ressources essentielles sont en cache. U
 
 Le dépôt public et les fichiers ont été créés via le connecteur GitHub. Le workflow teste le moteur, puis tente le déploiement Pages.
 
-Le premier déploiement a échoué à l’activation initiale de Pages avec `Resource not accessible by integration`. L’accès du connecteur ne propose pas de mutation permettant d’activer Pages. Le code publié ne doit donc pas être présenté comme un site déjà accessible au public.
+Le premier déploiement a échoué à l’activation initiale de Pages avec `Resource not accessible by integration`. Après activation de Pages par le propriétaire, le connecteur GitHub a relancé le job en échec. Le déploiement et le job de vérification sont maintenant réussis.
 
-Activation nécessaire par le propriétaire : dans les réglages du dépôt, Pages → Build and deployment → Source → GitHub Actions. Ensuite relancer le workflow ou pousser un commit. Le lien public devra être contrôlé après succès.
+URL publique contrôlée : https://giovannihilaire01-cyber.github.io/garage-de-quartier/
+
+Validation sur l’URL publique au format mobile : accueil de Samira, inspection, mesures, diagnostic batterie, commande, quatre fixations, installation, contrôle et livraison. Résultat : une voiture livrée et 520 € de trésorerie. Les 29 tests passent également depuis le site public ; le service worker est actif et aucun débordement horizontal n’a été détecté.
 
 ## Limites
 
